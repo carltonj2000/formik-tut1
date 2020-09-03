@@ -1,9 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
 import "./styles.css";
+
+const MyTextInput = ({ label, ...props }) => {
+  // useField() returns [formik.getFieldProps(), formik.getFieldMeta()]
+  // which we can spread on <input> and also replace ErrorMessage entirely.
+  const [field, meta] = useField(props);
+  return (
+    <>
+      <label htmlFor={props.id || props.name}>{label}</label>
+      <input className="text-input" {...field} {...props} />
+      {meta.touched && meta.error ? (
+        <div className="error">{meta.error}</div>
+      ) : null}
+    </>
+  );
+};
 
 const SignupForm = () => {
   return (
@@ -27,17 +42,9 @@ const SignupForm = () => {
     >
       {(formik) => (
         <Form>
-          <label htmlFor="firstName">First Name</label>
-          <Field name="firstName" type="text" />
-          <ErrorMessage name="firstName" />
-
-          <label htmlFor="lastName">Last Name</label>
-          <Field name="lastName" type="text" />
-          <ErrorMessage name="lastName" />
-
-          <label htmlFor="email">Email Address</label>
-          <Field name="email" type="email" />
-          <ErrorMessage name="email" />
+          <MyTextInput label="First Name" name="firstName" type="text" />
+          <MyTextInput label="Last Name" name="lastName" type="text" />
+          <MyTextInput label="Email Address" name="email" type="email" />
 
           <button type="submit">Submit</button>
         </Form>
